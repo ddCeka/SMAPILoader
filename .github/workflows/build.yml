@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.312'
+
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      - name: Install custom Mono runtime
+        run: |
+          PACK_DIR=$(find /usr/share/dotnet/packs/Microsoft.NETCore.App.Runtime.Mono.android-arm64 -maxdepth 1 -mindepth 1 -type d | head -1)
+          echo "Pack dir: $PACK_DIR"
+          cp SharedLibs/native/arm64-v8a/libmonosgen-2.0.so \
+             "$PACK_DIR/runtimes/android-arm64/native/libmonosgen-2.0.so"
+
+      - name: Restore NuGet packages
+        run: |
+          dotnet restore SMAPIGameLoader/SMAPIGameLoader.csproj \
+            -p:RuntimeIdentifier="android-arm64"
+
+      - name: Build APK
+        run: |
+          dotnet build SMAPIGameLoader/SMAPIGameLoader.csproj \
+            -c Release \
+            --no-restore \
+            -p:AndroidSdkDirectory=$ANDROID_SDK_ROOT \
+            -p:JavaSdkDirectory=$JAVA_HOME_17_X64 \
+            -p:AndroidCreatePackagePerAbi=false \
+            -p:RuntimeIdentifier="android-arm64"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SMAPILoader-APK
+          path: SMAPIGameLoader/bin/Release/net9.0-android/android-arm64/*.apk
