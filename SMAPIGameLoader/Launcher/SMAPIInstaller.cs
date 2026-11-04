@@ -15,7 +15,6 @@ namespace SMAPIGameLoader.Launcher;
 
 internal static class SMAPIInstaller
 {
-    public const string GithubOwner = "NRTnarathip";
     public const string GithubRepoName = "SMAPI-Android-1.6";
     public static long GetBuildCode()
     {
@@ -72,9 +71,9 @@ internal static class SMAPIInstaller
                 try
                 {
                     TaskTool.SetTitle("Install SMAPI Online");
-                    var github = new GitHubClient(new ProductHeaderValue("SMPAI-Installer"));
+                    var github = new GitHubClient(new ProductHeaderValue("SMAPI-Installer"));
                     TaskTool.NewLine("try get all release..");
-                    var releases = await github.Repository.Release.GetAll(GithubOwner, GithubRepoName);
+                    var releases = await github.Repository.Release.GetAll(GithubRepoName);
                     TaskTool.NewLine("found release count: " + releases.Count);
                     var latestRelease = releases.FirstOrDefault();
                     if (latestRelease is null)
