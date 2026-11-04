@@ -67,33 +67,7 @@ public class LauncherActivity : AppCompatActivity
 
     private static bool AssetGameVerify()
     {
-        try
-        {
-            if (StardewApkTool.IsInstalled == false)
-            {
-                var currentPackage = StardewApkTool.CurrentPackageInfo;
-                if (currentPackage != null)
-                    switch (currentPackage.PackageName)
-                    {
-                        case StardewApkTool.GamePlayStorePackageName:
-                            ToastNotifyTool.Notify("Please Download Game From Play Store");
-                            break;
-                        case StardewApkTool.GameGalaxyStorePackageName:
-                            ToastNotifyTool.Notify("Please Download Game From Galaxy Store");
-                            break;
-                    }
-                else
-                    ToastNotifyTool.Notify("Please Download Game From Play Store Or Galaxy Store");
-
-                return false;
-            }
-        }
-        catch (Exception ex)
-        {
-            ToastNotifyTool.Notify("err;" + ex);
-            return false;
-        }
-
+        // No need for verification
         return true;
     }
 
